@@ -33,3 +33,9 @@ class Bollinger(SeriesIndicator):
         self.current_volatility = self.data['Upper Band'].iloc[-1] - self.data['Lower Band'].iloc[-1]
         return self.data
     
+    def get_volatility(self) -> float:
+        """
+        Returns the current volatility of the Bollinger Bands.
+        """
+        return self.current_volatility
+    
