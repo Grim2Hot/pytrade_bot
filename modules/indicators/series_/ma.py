@@ -42,3 +42,4 @@ class EMA(SeriesIndicator):
             adjust=adjust
             ).mean()
         return self.data
+    

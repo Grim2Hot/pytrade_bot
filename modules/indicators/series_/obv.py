@@ -30,3 +30,4 @@ class OBV(SeriesIndicator):
             np.where(self.data['Close'] < self.data['Close'].shift(1), -self.data['Volume'], 0)
         ).cumsum()
         return self.data
+    

@@ -31,3 +31,4 @@ class Bollinger(SeriesIndicator):
         self.data['Lower Band'] = self.data['Middle Band'] - (self.data['Close'].rolling(window=self.period).std() * self.mult)
 
         return self.data
+    
