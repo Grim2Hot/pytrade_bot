@@ -25,6 +25,7 @@ class BollingerStrategy(Strategy):
         else:
             self.bollinger = bollinger
         
+        self.bollinger.calculate()
         self.position = position if position else None
         self.config = config if config else {}
         self.buy_threshold = self.config.get('buy_threshold', 0.8)
