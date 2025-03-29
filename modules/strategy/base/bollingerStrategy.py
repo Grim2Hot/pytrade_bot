@@ -31,8 +31,8 @@ class BollingerStrategy(Strategy):
         self.buy_threshold = self.config.get('buy_threshold', 0.8)
         self.sell_threshold = self.config.get('sell_threshold', 0.2)
         self.loss = self.config.get('loss', -1)
-        self.lower_bounce = self.config.get('lower_bounce', 0.02)
-        self.upper_bounce = self.config.get('upper_bounce', 0.98)
+        self.lower_bounce = self.config.get('lower_bounce', 0.05)
+        self.upper_bounce = self.config.get('upper_bounce', 0.95)
         
 
     def signal_breakout(self) -> Signal:
