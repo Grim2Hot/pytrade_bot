@@ -1,5 +1,7 @@
 from ...indicators.series_.bollinger import Bollinger
+from ...indicators.series_.ma import SMA
 from ...signal.base import Signal
+from ...signal.trend import Trend
 from base import Strategy
 import pandas as pd
 
@@ -38,3 +40,13 @@ class BollingerStrategy(Strategy):
         else:
             return Signal.HOLD
         
+    def signal_riding(self) -> Signal:
+        """
+
+        """
+        sma = SMA(self.data, self.bollinger.period)
+        trend = sma.get_trend()
+        sma_series = sma.get_sma()
+
+        
+
