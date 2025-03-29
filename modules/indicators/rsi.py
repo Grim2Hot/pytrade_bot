@@ -3,6 +3,14 @@ import pandas
 
 
 class RSI(LiteralIndicator):
+    """
+    Relative Strength Indicator (RSI).
+
+    @param data: A pandas DataFrame containing the historical price data.
+    @param period: The number of periods to use for the RSI calculation. Default is 14.
+    The time period is ignorant of time units, and instead uses rows. 
+    When instantiating the class, it may be best to calculate the rows before the class is instantiated.
+    """
     def __init__(self, data: pandas.DataFrame, period: int = 14):
         super().__init__(data)
         self.period = period
@@ -26,5 +34,7 @@ class RSI(LiteralIndicator):
         avg_loss = df['close'].diff().where(df['close'].diff() < 0, 0).mean()
         rs = avg_gain / abs(avg_loss) if avg_loss != 0 else 0
         rsi = 100 - (100 / (1 + rs))
+        # Set self.rsi for later calling
+        self.rsi = rsi
         return rsi 
         
