@@ -39,3 +39,11 @@ class Bollinger(SeriesIndicator):
         """
         return self.current_volatility
     
+    def is_squeezed(self, window: int = 20, quantile: float = 0.2) -> bool:
+        """
+        Returns True if the Bollinger Bands are squeezed, False otherwise.
+        A squeeze is defined as the current volatility being below the specified quantile of the rolling volatility.
+        """
+        rolling_volatility = self.data['Upper Band'].rolling(window=window).std()
+        return self.current_volatility < rolling_volatility.quantile(quantile)
+    
