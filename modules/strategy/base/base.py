@@ -8,9 +8,8 @@ class Strategy(ABC):
     """
     Abstract base class for all trading strategies.
     """
-    def __init__(self, data : pandas.DataFrame, indicators : list = None):
+    def __init__(self, data : pandas.DataFrame):
         self.data = data
-        self.indicators = indicators if indicators is not None else []
     
     @abstractmethod
     def get_signal(self):
