@@ -15,7 +15,7 @@ class BollingerStrategy(Strategy):
         else:
             self.bollinger = bollinger
 
-    def get_signal(self) -> Signal:
+    def signal_breakout(self) -> Signal:
         """
         Returns a signal (BUY, SELL, HOLD) based on the Bollinger Bands strategy.
         Strategy:
@@ -30,10 +30,10 @@ class BollingerStrategy(Strategy):
 
         # Check for buy/sell signals based on Bollinger Bands
         if self.data['Close'].iloc[-1] < bollinger_data['Lower Band'].iloc[-1]:
-            print("Bollinger detected a buy signal")
+            print("Bollinger detected a breakout buy signal")
             return Signal.BUY
         elif self.data['Close'].iloc[-1] > bollinger_data['Upper Band'].iloc[-1]:
-            print("Bollinger detected a sell signal")
+            print("Bollinger detected a breakout sell signal")
             return Signal.SELL
         else:
             return Signal.HOLD
