@@ -1,4 +1,4 @@
-from ...indicators.bollinger import Bollinger
+from ...indicators.series_.bollinger import Bollinger
 from ...signal.base import Signal
 from base import Strategy
 import pandas as pd
