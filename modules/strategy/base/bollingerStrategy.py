@@ -31,8 +31,8 @@ class BollingerStrategy(Strategy):
         self.buy_threshold = self.config.get('buy_threshold', 0.8)
         self.sell_threshold = self.config.get('sell_threshold', 0.2)
         self.loss = self.config.get('loss', -1)
-        self.lower_bounce = self.config.get('lower_bounce', 0.05)
-        self.upper_bounce = self.config.get('upper_bounce', 0.95)
+        self.lower_bounce = self.config.get('lower_bounce', 0.02)
+        self.upper_bounce = self.config.get('upper_bounce', 0.98)
         
 
     def signal_breakout(self) -> Signal:
@@ -77,14 +77,14 @@ class BollingerStrategy(Strategy):
             # No position, we can only buy or hold practically, but we include sell signals for 
             # CIV calculation purposes, as it indicates the nature of the current trend.
             if trend in (Trend.STR_UP, Trend.UP):
-                if band_position > self.buy_threshold:
+                if (band_position > self.buy_threshold) & (band_position <= 1):
                     print("Bollinger detected a riding buy signal")
                     return Signal.BUY
                 else:
                     return Signal.HOLD
                 
             elif trend in (Trend.STR_DOWN, Trend.DOWN):
-                if band_position < self.sell_threshold:
+                if (band_position < self.sell_threshold) & (band_position >= 0):
                     print("Bollinger detected a riding sell signal")
                     return Signal.SELL
                 else:
@@ -138,7 +138,6 @@ class BollingerStrategy(Strategy):
             band_position = 0.5
         else:
             band_position = (curr_price - self.bollinger.data['Lower Band'].iloc[-1]) / band_gap
-
         
         if band_position < self.lower_bounce:
             print("Bollinger detected a bounce buy signal")
