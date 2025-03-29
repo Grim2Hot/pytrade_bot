@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 import pandas
 
 
@@ -19,7 +20,7 @@ class LiteralIndicator(ABC):
         self.data = data
 
     @abstractmethod
-    def calculate(self) -> int:
+    def calculate(self) -> Any:
         """
         Adds the calculated field to the dataframe parsed to the class.
         """
