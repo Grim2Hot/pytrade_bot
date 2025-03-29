@@ -1,4 +1,5 @@
 from ..base import SeriesIndicator
+from ...signal.trend import Trend
 import pandas
 
 
@@ -21,6 +22,36 @@ class SMA(SeriesIndicator):
         """
         self.data[f'SMA_{self.period}'] = self.data['Close'].rolling(window=self.period).mean()
         return self.data
+    
+    def get_sma(self) -> pandas.Series:
+        """
+        Returns the calculated SMA series.
+        """
+        return self.data[f'SMA_{self.period}']
+    
+    def get_trend(self, window: int = 10) -> Trend:
+        """
+        """
+        sma_col = f'SMA_{self.period}'
+        if sma_col not in self.data.columns:
+            self.calculate()
+
+        recent_sma = self.data[sma_col].dropna().tail(window)
+        if len(recent_sma) < window:
+            return Trend.NONE
+
+        pct_change = (recent_sma.iloc[-1] / recent_sma.iloc[0] - 1) * 100
+
+        if pct_change > 5:
+            return Trend.STR_UP
+        elif pct_change > 1:
+            return Trend.UP
+        elif pct_change < -5:
+            return Trend.STR_DOWN
+        elif pct_change < -1:
+            return Trend.DOWN
+        else:
+            return Trend.NONE
     
 class EMA(SeriesIndicator):
     """
