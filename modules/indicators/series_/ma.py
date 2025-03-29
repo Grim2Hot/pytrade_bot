@@ -71,9 +71,10 @@ class EMA(SeriesIndicator):
     Exponential Moving Average (EMA).
     EMA puts more weight on the most recent prices, making it more responsive to new information.
     """
-    def __init__(self, data: pandas.DataFrame, period: int = 14):
+    def __init__(self, data: pandas.DataFrame, period: int = 14, config: dict = None):
         super().__init__(data)
         self.period = period
+        self.config = config if config else {}
 
     def calculate(self, adjust: bool = False) -> pandas.DataFrame:
         """

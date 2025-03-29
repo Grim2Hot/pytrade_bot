@@ -9,3 +9,10 @@ indiators:
         up_threshold: 0.05
         down_threshold: -0.05
         strong_down_threshold: -0.2
+      EMA:
+        strong_up_threshold: 0.2
+        up_threshold: 0.05
+        down_threshold: -0.05
+        strong_down_threshold: -0.2
+    obv:
+      none
