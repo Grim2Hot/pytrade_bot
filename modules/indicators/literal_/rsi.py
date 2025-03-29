@@ -1,4 +1,4 @@
-from base import LiteralIndicator
+from ..base import LiteralIndicator
 import pandas
 
 

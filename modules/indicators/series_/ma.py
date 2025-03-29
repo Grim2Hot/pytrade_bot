@@ -1,4 +1,4 @@
-from base import SeriesIndicator
+from ..base import SeriesIndicator
 import pandas
 
 

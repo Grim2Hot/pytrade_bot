@@ -1,5 +1,5 @@
 from base import LiteralIndicator
-from bollinger import Bollinger
+from ..series_.bollinger import Bollinger
 import pandas
 
 
