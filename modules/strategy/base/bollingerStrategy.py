@@ -11,7 +11,9 @@ class BollingerStrategy(Strategy):
     Bollinger Bands trading signals strategy.
     """
     def __init__(
-            self, data: pd.DataFrame, 
+            self, 
+            data: pd.DataFrame, 
+            position: float = None,
             bollinger: Bollinger = None, 
             period: int = 20, 
             std_dev: int = 2,
@@ -22,7 +24,13 @@ class BollingerStrategy(Strategy):
             self.bollinger = Bollinger(data, period, std_dev)
         else:
             self.bollinger = bollinger
+        
+        self.position = position if position else None
         self.config = config if config else {}
+        self.buy_threshold = self.config.get('buy_threshold', 0.8)
+        self.sell_threshold = self.config.get('sell_threshold', 0.2)
+        self.loss = self.config.get('loss', -1)
+        
 
     def signal_breakout(self) -> Signal:
         """
@@ -49,11 +57,68 @@ class BollingerStrategy(Strategy):
         
     def signal_riding(self) -> Signal:
         """
-
+        Uses 'Riding the Bands' strategy to determine what signal is relevant.
         """
         sma = SMA(self.data, self.bollinger.period, self.config)
         trend = sma.get_trend()
-        sma_series = sma.get_sma()
+        band_range = self.bollinger.get_volatility()
+        curr_price = self.data['Close'].iloc[-1]
 
+
+        if band_range == 0:
+            band_position = 0.5
+        else:
+            band_position = (curr_price - self.bollinger.data['Lower Band'].iloc[-1]) / band_range
+
+        if self.position is None:
+            # No position, we can only buy or hold practically, but we include sell signals for 
+            # CIV calculation purposes, as it indicates the nature of the current trend.
+            if trend in (Trend.STR_UP, Trend.UP):
+                if band_position > self.buy_threshold:
+                    print("Bollinger detected a riding buy signal")
+                    return Signal.BUY
+                else:
+                    return Signal.HOLD
+                
+            elif trend in (Trend.STR_DOWN, Trend.DOWN):
+                if band_position < self.sell_threshold:
+                    print("Bollinger detected a riding sell signal")
+                    return Signal.SELL
+                else:
+                    return Signal.HOLD
+                
+            else:
+                # No clear trend
+                return Signal.HOLD
         
+        else:
+            # We have a position, and must factor that into considerations
+            entry_price = self.position
+            profit_percent = (curr_price - entry_price) / entry_price * 100
 
+            if trend in (Trend.STR_UP, Trend.UP):
+                if profit_percent > 0:
+                    return Signal.HOLD
+                else:
+                    # Could incorporate stop loss or volatility checking here.
+                    return Signal.HOLD
+                
+            elif trend in (Trend.STR_DOWN, Trend.DOWN):
+                if profit_percent < self.loss:
+                    return Signal.SELL
+                else:
+                    return Signal.HOLD
+
+            else:
+                # No clear trend
+                return Signal.HOLD
+
+    def signal_squeeze(self) -> Signal:
+        """
+        Uses the 'Bollinger Squeeze' strategy to determine what signal is relevant.
+        """           
+        if self.bollinger.is_squeezed():
+            print("Bollinger detected a squeeze signal")
+            return Signal.SQUEEZE
+        else:
+            return Signal.HOLD
