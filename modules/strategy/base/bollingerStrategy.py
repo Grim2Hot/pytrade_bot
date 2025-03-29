@@ -1,3 +1,4 @@
+from ....utils.utils import is_local_min, is_local_max
 from ...indicators.series_.bollinger import Bollinger
 from ...indicators.series_.ma import SMA
 from ...signal.base import Signal
@@ -31,8 +32,9 @@ class BollingerStrategy(Strategy):
         self.buy_threshold = self.config.get('buy_threshold', 0.8)
         self.sell_threshold = self.config.get('sell_threshold', 0.2)
         self.loss = self.config.get('loss', -1)
-        self.lower_bounce = self.config.get('lower_bounce', 0.05)
-        self.upper_bounce = self.config.get('upper_bounce', 0.95)
+        self.lower_bounce = self.config.get('lower_bounce', 0.10)
+        self.upper_bounce = self.config.get('upper_bounce', 0.90)
+        self.lookback = self.config.get('lookback', 20)
         
 
     def signal_breakout(self) -> Signal:
@@ -139,11 +141,19 @@ class BollingerStrategy(Strategy):
         else:
             band_position = (curr_price - self.bollinger.data['Lower Band'].iloc[-1]) / band_gap
         
-        if band_position < self.lower_bounce:
+        # Account for oddities in the data
+        lookback = self.lookback
+        if len(self.data) < lookback + 1:
+            return Signal.HOLD
+        
+        recent_prices = self.data['Close'].iloc[-(lookback+1):].values
+
+        if band_position < self.lower_bounce and is_local_min(recent_prices):
             print("Bollinger detected a bounce buy signal")
             return Signal.BUY
-        elif band_position > self.upper_bounce:
+        elif band_position > self.upper_bounce and is_local_max(recent_prices):
             print("Bollinger detected a bounce sell signal")
             return Signal.SELL
         else:
             return Signal.HOLD
+                
