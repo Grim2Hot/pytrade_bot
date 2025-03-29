@@ -1,0 +1,11 @@
+global options:
+  # This is a global options section. You can set global options here.
+  test: true
+indiators:
+  series:
+    moving_average:
+      SMA:
+        strong_up_threshold: 0.2
+        up_threshold: 0.05
+        down_threshold: -0.05
+        strong_down_threshold: -0.2
