@@ -30,6 +30,8 @@ class BollingerStrategy(Strategy):
         self.buy_threshold = self.config.get('buy_threshold', 0.8)
         self.sell_threshold = self.config.get('sell_threshold', 0.2)
         self.loss = self.config.get('loss', -1)
+        self.lower_bounce = self.config.get('lower_bounce', 0.05)
+        self.upper_bounce = self.config.get('upper_bounce', 0.95)
         
 
     def signal_breakout(self) -> Signal:
@@ -120,5 +122,28 @@ class BollingerStrategy(Strategy):
         if self.bollinger.is_squeezed():
             print("Bollinger detected a squeeze signal")
             return Signal.SQUEEZE
+        else:
+            return Signal.HOLD
+
+    def signal_bounce(self) -> Signal:
+        """
+        Asserts a trade signal if the price is bouncing off the bands.
+        """
+        self.bollinger.calculate()
+        band_gap = self.bollinger.get_volatility()
+        curr_price = self.data['Close'].iloc[-1]
+
+        if band_gap == 0:
+            band_position = 0.5
+        else:
+            band_position = (curr_price - self.bollinger.data['Lower Band'].iloc[-1]) / band_gap
+
+        
+        if band_position < self.lower_bounce:
+            print("Bollinger detected a bounce buy signal")
+            return Signal.BUY
+        elif band_position > self.upper_bounce:
+            print("Bollinger detected a bounce sell signal")
+            return Signal.SELL
         else:
             return Signal.HOLD
