@@ -3,14 +3,14 @@ import pandas
 
 
 class RSI(LiteralIndicator):
-    def __init__(self, data: pandas.DataFrame):
+    def __init__(self, data: pandas.DataFrame, period: int = 14):
         super().__init__(data)
+        self.period = period
 
-    def calculate(self, period: int = 14) -> int:
+    def calculate(self) -> int:
         """
         Calculates the RSI indicator for a given dataframe. 
 
-        @param period: The period of 'n' days' down closes. n is rows, but represents unit of time parsed.
         @return: An int representing the RSI.
 
         @description: The RSI is a momentum oscillator that measures the speed and change of price movements.
@@ -21,7 +21,7 @@ class RSI(LiteralIndicator):
         RS = average gain / average loss
         RSI = 100 - (100 / (1 + RS))
         """
-        df = self.data[:period].copy()
+        df = self.data[:self.period].copy()
         avg_gain = df['close'].diff().where(df['close'].diff() > 0, 0).mean()
         avg_loss = df['close'].diff().where(df['close'].diff() < 0, 0).mean()
         rs = avg_gain / abs(avg_loss) if avg_loss != 0 else 0
