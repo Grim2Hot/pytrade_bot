@@ -23,10 +23,10 @@ class VolatilityZScore(LiteralIndicator):
     """
     def __init__(self, data: pandas.DataFrame, bollinger: Bollinger, period: int = 20, sma_interval: int = None):
         super().__init__(data)
-        self.period = period
-        self.bollinger = bollinger
-        self.sma_interval = sma_interval
-        self.z_score = None
+        self.period: int = period
+        self.bollinger: Bollinger = bollinger
+        self.sma_interval: int = sma_interval
+        self.z_score: float = None
 
     def calculate(self) -> float:
         """
@@ -45,6 +45,6 @@ class VolatilityZScore(LiteralIndicator):
             noise_score = band_width / self.data['Middle Band'].rolling(window=self.sma_interval).mean()
         
         z_score = (noise_score - noise_score.rolling(window=self.period).mean()) / noise_score.rolling(window=self.period).std()
-        self.z_score = z_score
+        self.z_score = z_score.iloc[-1]
 
         return z_score.iloc[-1]
