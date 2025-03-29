@@ -20,7 +20,8 @@ class OBV(SeriesIndicator):
 
     def __init__(self, data: pandas.DataFrame):
         super().__init__(data)
-
+        self.most_recent_obv: float = None
+        
     def calculate(self) -> pandas.DataFrame:
         """
         Adds the calculated field to the dataframe parsed to the class.
@@ -29,5 +30,6 @@ class OBV(SeriesIndicator):
             self.data['Close'] > self.data['Close'].shift(1),  self.data['Volume'], 
             np.where(self.data['Close'] < self.data['Close'].shift(1), -self.data['Volume'], 0)
         ).cumsum()
+        self.most_recent_obv = self.data['OBV'].iloc[-1]
         return self.data
     
