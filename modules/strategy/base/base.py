@@ -9,7 +9,8 @@ class Strategy(ABC):
     Abstract base class for all trading strategies.
     """
     def __init__(self, data : pandas.DataFrame, indicators : list = None):
-        raise NotImplementedError("This is an abstract class. Please implement the methods in a subclass.")
+        self.data = data
+        self.indicators = indicators if indicators is not None else []
     
     @abstractmethod
     def get_signal(self):
