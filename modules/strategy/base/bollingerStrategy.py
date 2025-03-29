@@ -10,12 +10,19 @@ class BollingerStrategy(Strategy):
     """
     Bollinger Bands trading signals strategy.
     """
-    def __init__(self, data: pd.DataFrame, bollinger: Bollinger = None, period: int = 20, std_dev: int = 2):
+    def __init__(
+            self, data: pd.DataFrame, 
+            bollinger: Bollinger = None, 
+            period: int = 20, 
+            std_dev: int = 2,
+            config: dict = None):
+        
         super().__init__(data)
         if bollinger is None:
             self.bollinger = Bollinger(data, period, std_dev)
         else:
             self.bollinger = bollinger
+        self.config = config if config else {}
 
     def signal_breakout(self) -> Signal:
         """
@@ -44,7 +51,7 @@ class BollingerStrategy(Strategy):
         """
 
         """
-        sma = SMA(self.data, self.bollinger.period)
+        sma = SMA(self.data, self.bollinger.period, self.config)
         trend = sma.get_trend()
         sma_series = sma.get_sma()
 

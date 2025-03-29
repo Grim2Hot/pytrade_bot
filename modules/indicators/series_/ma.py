@@ -4,9 +4,6 @@ import yaml
 import pandas
 
 
-"""
-Contains the classes for the Moving Average indicators.
-"""
 
 class SMA(SeriesIndicator):
     """
