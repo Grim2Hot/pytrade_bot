@@ -21,6 +21,7 @@ class Bollinger(SeriesIndicator):
         super().__init__(data)
         self.period = period
         self.mult = mult
+        self.current_volatility = None
 
     def calculate(self) -> pandas.DataFrame:
         """
@@ -29,6 +30,6 @@ class Bollinger(SeriesIndicator):
         self.data['Middle Band'] = self.data['Close'].rolling(window=self.period).mean()
         self.data['Upper Band'] = self.data['Middle Band'] + (self.data['Close'].rolling(window=self.period).std() * self.mult)
         self.data['Lower Band'] = self.data['Middle Band'] - (self.data['Close'].rolling(window=self.period).std() * self.mult)
-
+        self.current_volatility = self.data['Upper Band'].iloc[-1] - self.data['Lower Band'].iloc[-1]
         return self.data
     
