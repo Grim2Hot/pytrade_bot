@@ -22,3 +22,5 @@ strategies:
       buy_threshold: 0.8 # If the price is above this % of the band, and the trend is up, a buy signal is triggered
       sell_threshold: 0.2 # If the price is below this % of the band, and the trend is down, a sell signal is triggered
       loss: 1 # 1% loss is the maximum acceptable before a sell signal is triggered
+      lower_bounce: 0.05 # If the price is below this % of the band, and the trend is up, a buy signal is triggered
+      upper_bounce: 0.95 # If the price is above this % of the band, and the trend is down, a sell signal is triggered
