@@ -5,9 +5,25 @@ import numpy as np
 
 
 class ARIMAEGARCHModel:
-    def __init__(self, p=1, d=0, q=1, vol='EGARCH', vol_params=(1, 1, 1)):
+    """
+    ARIMA-EGARCH model for time series analysis.
+    This model combines ARIMA for trend modeling and EGARCH for volatility modeling.
+    The expected return is modeled using ARIMA, and the residuals of the prediction are fed into the EGARCH model to assess volatility, or risk.
+
+    @param p: The order of the Symmetric innovation.
+    The number of GARCH terms (lags of the conditional variance). 
+    These terms capture how past volatility (or variance) affects current volatility.
+    @param o: The order of the Asymmeteric innovation.
+    The number of leverage terms, or asymmetric terms. 
+    These capture how negative and positive shocks affect volatility differently (e.g., bad news having a larger impact than good news). 
+    This is a key feature of EGARCH, distinguishing it from standard GARCH.
+    @param q: The order of the lagged (transformed) conditional variance.
+    the number of ARCH terms (lags of the standardized residuals). 
+    These terms model how past shocks (squared returns, typically) impact current volatility.
+    """
+    def __init__(self, p=1, o=0, q=1, vol='EGARCH', vol_params=(1, 1, 1)):
         self.p = p
-        self.d = d
+        self.o = o
         self.q = q
         self.vol = vol
         self.vol_params = vol_params
@@ -21,7 +37,7 @@ class ARIMAEGARCHModel:
         Fit the ARIMA-EGARCH model to the given time series data.
         """
         log_returns = np.log(series).diff().dropna()
-        self.arima_model = ARIMA(log_returns, order=(self.p, self.d, self.q))
+        self.arima_model = ARIMA(log_returns, order=(self.p, self.o, self.q))
         self.fitted_arima = self.arima_model.fit()
         residuals = self.fitted_arima.resid
 
