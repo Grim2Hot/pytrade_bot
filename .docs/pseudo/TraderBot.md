@@ -1,4 +1,4 @@
-# Broker Class Bot
+# Trader Class Bot
 
 ## What does it do?
 - Fetches data on the given stock
