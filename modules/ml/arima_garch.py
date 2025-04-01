@@ -13,10 +13,12 @@ class ARIMAEGARCHModel:
     @param p: The order of the Symmetric innovation.
     The number of GARCH terms (lags of the conditional variance). 
     These terms capture how past volatility (or variance) affects current volatility.
+
     @param o: The order of the Asymmeteric innovation.
     The number of leverage terms, or asymmetric terms. 
     These capture how negative and positive shocks affect volatility differently (e.g., bad news having a larger impact than good news). 
     This is a key feature of EGARCH, distinguishing it from standard GARCH.
+    
     @param q: The order of the lagged (transformed) conditional variance.
     the number of ARCH terms (lags of the standardized residuals). 
     These terms model how past shocks (squared returns, typically) impact current volatility.
