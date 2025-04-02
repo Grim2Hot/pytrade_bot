@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Signal(Enum):
+class Trade(Enum):
     """
     Enum class for signal types.
     """

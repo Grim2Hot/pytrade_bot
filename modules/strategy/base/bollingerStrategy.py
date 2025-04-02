@@ -1,7 +1,7 @@
 from ....utils.utils import is_local_min, is_local_max
 from ...indicators.series_.bollinger import Bollinger
 from ...indicators.series_.ma import SMA
-from ...signal.trade import Signal
+from ...signal.trade import Trade
 from ...signal.trend import Trend
 from base import Strategy
 import pandas as pd
@@ -37,7 +37,7 @@ class BollingerStrategy(Strategy):
         self.lookback = self.config.get('lookback', 20)
         
 
-    def signal_breakout(self) -> Signal:
+    def signal_breakout(self) -> Trade:
         """
         Returns a signal (BUY, SELL, HOLD) based on the Bollinger Bands strategy.
         Strategy:
@@ -53,14 +53,14 @@ class BollingerStrategy(Strategy):
         # Check for buy/sell signals based on Bollinger Bands
         if self.data['Close'].iloc[-1] < bollinger_data['Lower Band'].iloc[-1]:
             print("Bollinger detected a breakout buy signal")
-            return Signal.BUY
+            return Trade.BUY
         elif self.data['Close'].iloc[-1] > bollinger_data['Upper Band'].iloc[-1]:
             print("Bollinger detected a breakout sell signal")
-            return Signal.SELL
+            return Trade.SELL
         else:
-            return Signal.HOLD
+            return Trade.HOLD
         
-    def signal_riding(self) -> Signal:
+    def signal_riding(self) -> Trade:
         """
         Uses 'Riding the Bands' strategy to determine what signal is relevant.
         """
@@ -81,20 +81,20 @@ class BollingerStrategy(Strategy):
             if trend in (Trend.STR_UP, Trend.UP):
                 if (band_position > self.buy_threshold) & (band_position <= 1):
                     print("Bollinger detected a riding buy signal")
-                    return Signal.BUY
+                    return Trade.BUY
                 else:
-                    return Signal.HOLD
+                    return Trade.HOLD
                 
             elif trend in (Trend.STR_DOWN, Trend.DOWN):
                 if (band_position < self.sell_threshold) & (band_position >= 0):
                     print("Bollinger detected a riding sell signal")
-                    return Signal.SELL
+                    return Trade.SELL
                 else:
-                    return Signal.HOLD
+                    return Trade.HOLD
                 
             else:
                 # No clear trend
-                return Signal.HOLD
+                return Trade.HOLD
         
         else:
             # We have a position, and must factor that into considerations
@@ -103,32 +103,32 @@ class BollingerStrategy(Strategy):
 
             if trend in (Trend.STR_UP, Trend.UP):
                 if profit_percent > 0:
-                    return Signal.HOLD
+                    return Trade.HOLD
                 else:
                     # Could incorporate stop loss or volatility checking here.
-                    return Signal.HOLD
+                    return Trade.HOLD
                 
             elif trend in (Trend.STR_DOWN, Trend.DOWN):
                 if profit_percent < self.loss:
-                    return Signal.SELL
+                    return Trade.SELL
                 else:
-                    return Signal.HOLD
+                    return Trade.HOLD
 
             else:
                 # No clear trend
-                return Signal.HOLD
+                return Trade.HOLD
 
-    def signal_squeeze(self) -> Signal:
+    def signal_squeeze(self) -> Trade:
         """
         Uses the 'Bollinger Squeeze' strategy to determine what signal is relevant.
         """           
         if self.bollinger.is_squeezed():
             print("Bollinger detected a squeeze signal")
-            return Signal.SQUEEZE
+            return Trade.SQUEEZE
         else:
-            return Signal.HOLD
+            return Trade.HOLD
 
-    def signal_bounce(self) -> Signal:
+    def signal_bounce(self) -> Trade:
         """
         Asserts a trade signal if the price is bouncing off the bands.
         """
@@ -144,16 +144,16 @@ class BollingerStrategy(Strategy):
         # Account for oddities in the data
         lookback = self.lookback
         if len(self.data) < lookback + 1:
-            return Signal.HOLD
+            return Trade.HOLD
         
         recent_prices = self.data['Close'].iloc[-(lookback+1):].values
 
         if band_position < self.lower_bounce and is_local_min(recent_prices):
             print("Bollinger detected a bounce buy signal")
-            return Signal.BUY
+            return Trade.BUY
         elif band_position > self.upper_bounce and is_local_max(recent_prices):
             print("Bollinger detected a bounce sell signal")
-            return Signal.SELL
+            return Trade.SELL
         else:
-            return Signal.HOLD
+            return Trade.HOLD
                 
