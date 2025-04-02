@@ -9,19 +9,21 @@ class ARIMAEGARCHModel:
     ARIMA-EGARCH model for time series analysis.
     This model combines ARIMA for trend modeling and EGARCH for volatility modeling.
     The expected return is modeled using ARIMA, and the residuals of the prediction are fed into the EGARCH model to assess volatility, or risk.
+    p, o, q are required orders for the ARIMA model.
+    vol & vol_params are required for the variation of ARCH model used.
 
-    @param p: The order of the Symmetric innovation.
-    The number of GARCH terms (lags of the conditional variance). 
-    These terms capture how past volatility (or variance) affects current volatility.
+    @param p: The order of the Symmetric innovation. The number of GARCH terms (lags of the conditional variance). These terms capture how past volatility (or variance) affects current volatility.
 
-    @param o: The order of the Asymmeteric innovation.
-    The number of leverage terms, or asymmetric terms. 
-    These capture how negative and positive shocks affect volatility differently (e.g., bad news having a larger impact than good news). 
-    This is a key feature of EGARCH, distinguishing it from standard GARCH.
+    @param o: The order of the Asymmeteric innovation. The number of leverage terms, or asymmetric terms. These capture how negative and positive shocks affect volatility differently (e.g., bad news having a larger impact than good news). This is a key feature of EGARCH, distinguishing it from standard GARCH.
     
     @param q: The order of the lagged (transformed) conditional variance.
     the number of ARCH terms (lags of the standardized residuals). 
     These terms model how past shocks (squared returns, typically) impact current volatility.
+
+    @param vol: The type of volatility model to use. Default is 'EGARCH'. For long-term volatility, use 'FIGARCH'.
+
+    @param vol_params: Parameters for the volatility model. If a diverent volatility model is used, ensure to set the parameters accordingly.
+    Reference arch documentation for more details on the parameters.
     """
     def __init__(self, p=1, o=0, q=1, vol='EGARCH', vol_params=(1, 1, 1)):
         self.p = p
