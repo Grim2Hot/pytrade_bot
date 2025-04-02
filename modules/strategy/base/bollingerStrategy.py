@@ -1,7 +1,7 @@
 from ....utils.utils import is_local_min, is_local_max
 from ...indicators.series_.bollinger import Bollinger
 from ...indicators.series_.ma import SMA
-from ...signal.base import Signal
+from ...signal.trade import Signal
 from ...signal.trend import Trend
 from base import Strategy
 import pandas as pd
