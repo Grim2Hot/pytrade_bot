@@ -36,6 +36,12 @@ class ARIMAEGARCHModel:
         self.fitted_arima = None
         self.fitted_garch = None
 
+    def get_precision(self):
+        """
+        TODO - Implement a method to get the precision of the model.
+        """
+        pass
+
     def fit(self, series: pd.Series):
         """
         Fit the ARIMA-EGARCH model to the given time series data.
