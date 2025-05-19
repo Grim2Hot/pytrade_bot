@@ -26,7 +26,7 @@ class BollingerStrategy(Strategy):
         else:
             self.bollinger = bollinger
         
-        self.bollinger.calculate()
+        self.bollinger.calculate() # Depending on decoupling of Bollinger, this may not be necessary.
         self.position = position if position else None
         self.config = config if config else {}
         self.buy_threshold = self.config.get('buy_threshold', 0.8)
@@ -64,6 +64,8 @@ class BollingerStrategy(Strategy):
         """
         Uses 'Riding the Bands' strategy to determine what signal is relevant.
         """
+        # TODO: If self.sma is None, we should calculate it here.
+        # Otherwise, we recalculate every time this function is called.
         sma = SMA(self.data, self.bollinger.period, self.config)
         trend = sma.get_trend()
         band_range = self.bollinger.get_volatility()
@@ -94,10 +96,14 @@ class BollingerStrategy(Strategy):
                 
             else:
                 # No clear trend
+                # TODO: A Hold signal is a deterministic signal - it is a positive action,
+                # it is not a neutral action. This could be reconsidered to an uncertainty signal.
                 return Trade.HOLD
         
         else:
             # We have a position, and must factor that into considerations
+            # TODO: self.position might not be numeric - it may be an object.
+            # Update this type/accessor to be more generic if so.
             entry_price = self.position
             profit_percent = (curr_price - entry_price) / entry_price * 100
 
@@ -121,7 +127,8 @@ class BollingerStrategy(Strategy):
     def signal_squeeze(self) -> Trade:
         """
         Uses the 'Bollinger Squeeze' strategy to determine what signal is relevant.
-        """           
+        """
+        # TODO: Review this 'is_squeezed' method if            
         if self.bollinger.is_squeezed():
             print("Bollinger detected a squeeze signal")
             return Trade.SQUEEZE
@@ -132,6 +139,8 @@ class BollingerStrategy(Strategy):
         """
         Asserts a trade signal if the price is bouncing off the bands.
         """
+        # TODO: Depending on object decoupling of bollinger indicator, the calculate() 
+        # may not need to be called here.
         self.bollinger.calculate()
         band_gap = self.bollinger.get_volatility()
         curr_price = self.data['Close'].iloc[-1]
